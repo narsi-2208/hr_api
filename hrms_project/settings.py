@@ -22,12 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@mt0pl2n17yun$-=&&lqh#veg45i1ebcht88o3(hfg&-%uu^8='
+SECRET_KEY = os.getenv('SECRET_KEY', 'insecure-dev-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'hr-api-894d.onrender.com']
 
 
 # Application definition
@@ -86,8 +87,15 @@ WSGI_APPLICATION = 'hrms_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': dj_database_url.config(conn_max_age=600, default='postgres://postgres:narsi2208@localhost:5432/hrms_db')
+# }
+
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, default='postgres://postgres:narsi2208@localhost:5432/hrms_db')
+    'default': dj_database_url.config(
+        conn_max_age=600,
+        default=os.getenv('DATABASE_URL')
+    )
 }
 
 # DATABASES = {
@@ -138,6 +146,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
